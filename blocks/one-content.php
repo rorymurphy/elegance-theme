@@ -17,7 +17,7 @@ for($i = 1; $i < sizeof($widths); $i++){
   }
 }
 
-$pos = get_sub_field('position');
+$pos = get_sub_field('content_position');
 $positions = array(
   $pos,
   $pos,

@@ -3,9 +3,15 @@ require_once 'plugins/plugin-loader.php';
 load_plugin('builder-framework');
 load_plugin('navbar-walker');
 
-add_action('wp_enqueue_scripts', function(){
-  wp_register_style('theme', get_stylesheet_directory_uri() . '/css/theme.css', array(), filemtime(get_stylesheet_directory() . '/css/theme.css'));
+add_theme_support('custom-header');
+add_theme_support('custom-background');
 
+add_action('wp_enqueue_scripts', function(){
+
+  wp_register_script( 'bootstrap', get_template_directory_uri() . '/js/bootstrap.min.js', array('jquery'), sha1(filemtime(get_template_directory() . '/js/bootstrap.min.js')) );
+  if(file_exists(get_stylesheet_directory() . '/css/theme.css')){
+    wp_register_style( 'theme', get_stylesheet_directory_uri() . '/css/theme.css', array(), sha1(filemtime(get_stylesheet_directory() . '/css/theme.css')) );
+  }
   wp_enqueue_style('theme');
 });
 function get_background_image_size($size){

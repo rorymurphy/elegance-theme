@@ -3,9 +3,13 @@
 require_once 'template-page.php';
 require_once 'default-block-types/one-content.php';
 require_once 'default-block-types/two-content.php';
+require_once 'default-block-types/recent-posts.php';
 
 class Builder_Framework{
   const BLOCK_TYPES_FILTER = 'elegance_block_types';
+  const BLOCK_CLASSES_FILTER = 'elegance_block_classes';
+  const BLOCK_VERTICAL_SIZES = 'elegance_block_vertical_sizes';
+  const THEME_TYPE_FILTER = 'elegance_block_themes';
   const BUILDER_POST_TYPES_FILTER = 'elegance_builder_post_types';
   const TEMPLATE_PAGE_POST_TYPE = 'template_page';
   const BUILDER_BLOCK_RENDER_ACTION = 'elegance_block_render_%1$s';
@@ -14,6 +18,8 @@ class Builder_Framework{
   var $post_types;
   var $block_iter;
   var $builder_obj;
+  var $themes;
+  var $vertical_sizes;
 
   function __construct(){
     $this->register_actions_filters();
@@ -24,7 +30,7 @@ class Builder_Framework{
 
     add_action('wp_head', array($this, 'create_embedded_stylesheet'));
 
-    add_filter('elegance_block_classes', array($this, 'block_classes'));
+    add_filter(self::BLOCK_CLASSES_FILTER, array($this, 'block_classes'));
   }
 
   function register_elements(){
@@ -36,6 +42,18 @@ class Builder_Framework{
       self::TEMPLATE_PAGE_POST_TYPE
     );
     $this->post_types = apply_filters(self::BUILDER_POST_TYPES_FILTER, $this->post_types);
+    $this->themes = array(
+      'default' => 'Default'
+    );
+    $this->themes = apply_filters(self::THEME_TYPE_FILTER, $this->themes);
+
+    $this->vertical_sizes = array (
+      'tight' => 'Tight',
+      'short' => 'Short',
+      'med' => 'Medium',
+      'tall' => 'Tall',
+    );
+    $this->vertical_sizes = apply_filters(self::BLOCK_VERTICAL_SIZES, $this->vertical_sizes);
 
     $this->register_fields();
   }
@@ -45,10 +63,18 @@ class Builder_Framework{
     $theme = get_sub_field('theme');
 
     $css_class = ($css_class !== '') ? explode(' ', $css_class) : array();
+
+    $layout = get_row_layout();
+    $css_class[] = 'eblock-type-' . $layout;
     $css_class[] = 'eblock-idx-' . $this->block_iter;
     if(null !== $theme && '' !== $theme){
       $css_class[] = 'eblock-theme-' . $theme;
     }
+
+    $size_mode = get_sub_field('size_mode_vertical');
+    $size = get_sub_field('size_vertical');
+
+    $css_class[] = sprintf('size-vert-%1$s-%2$s', $size_mode, $size);
 
     $classes = array_merge($classes, $css_class);
     return $classes;
@@ -141,7 +167,7 @@ class Builder_Framework{
           array (
             'param' => 'post_type',
             'operator' => '==',
-            'value' => 'post',
+            'value' => $ptype,
           ),
         );
       }
@@ -150,6 +176,7 @@ class Builder_Framework{
       $layouts = array();
       foreach($this->block_types as $block_type => $block_attrs){
         $block_fields = $block_attrs['fields'];
+
         $layout = array (
           'key' => 'block_' . $block_type . '_55c976d2bd9a7',
           'name' => $block_type,
@@ -162,8 +189,9 @@ class Builder_Framework{
         $common_fields = $this->get_common_fields($block_type);
         $combo_fields = array_merge_recursive($common_fields, $block_fields);
         foreach($combo_fields as $tab => $tab_fields){
+          $tab_key = preg_replace('/[^\w]+/', '_', $tab);
           $layout['sub_fields'][] = array (
-            'key' => 'block_' . $block_type . '_tab_' . $tab,
+            'key' => 'block_' . $block_type . '_tab_' . $tab_key,
             'label' => $tab,
             'name' => '',
             'type' => 'tab',
@@ -253,13 +281,15 @@ class Builder_Framework{
   }
 
   function get_common_fields($block_type){
+    $theme_keys = array_keys($this->themes);
+
     $fields = array(
       'Content' => array(
 
       ),
       'Appearance' => array(
         array (
-          'key' => self::get_block_type_key($block_type, 'field_55cacbaf0577d'),
+          'key' => 'field_55cacbaf0577d',
           'label' => 'Theme',
           'name' => 'theme',
           'type' => 'select',
@@ -271,11 +301,8 @@ class Builder_Framework{
             'class' => '',
             'id' => '',
           ),
-          'choices' => array (
-            'Default' => 'Default',
-          ),
-          'default_value' => array (
-          ),
+          'choices' => $this->themes,
+          'default_value' => $theme_keys[0],
           'allow_null' => 0,
           'multiple' => 0,
           'ui' => 0,
@@ -285,7 +312,7 @@ class Builder_Framework{
           'readonly' => 0,
         ),
         array (
-          'key' => self::get_block_type_key($block_type, 'field_55cacb880577c'),
+          'key' => 'field_55cacb880577c',
           'label' => 'CSS Class',
           'name' => 'css_class',
           'type' => 'text',
@@ -337,7 +364,7 @@ class Builder_Framework{
           'default_value' => '',
         ),
         array (
-          'key' => self::get_block_type_key($block_type, 'field_55c97743637de'),
+          'key' => 'field_55c97743637de',
           'label' => 'Background Color',
           'name' => 'background_color',
           'type' => 'color_picker',
@@ -352,7 +379,7 @@ class Builder_Framework{
           'default_value' => '',
         ),
         array (
-          'key' => self::get_block_type_key($block_type, 'field_55c9777c637df'),
+          'key' => 'field_55c9777c637df',
           'label' => 'Background Image',
           'name' => 'background_image',
           'type' => 'image',
@@ -376,7 +403,7 @@ class Builder_Framework{
           'mime_types' => '',
         ),
         array (
-          'key' => self::get_block_type_key($block_type, 'field_55c977af637e0'),
+          'key' => 'field_55c977af637e0',
           'label' => 'Background Position',
           'name' => 'background_position',
           'type' => 'select',
@@ -411,7 +438,7 @@ class Builder_Framework{
           'readonly' => 0,
         ),
         array (
-          'key' => self::get_block_type_key($block_type, 'field_55c977d6637e1'),
+          'key' => 'field_55c977d6637e1',
           'label' => 'Background Attachment',
           'name' => 'background_attachment',
           'type' => 'select',
@@ -441,7 +468,7 @@ class Builder_Framework{
           'readonly' => 0,
         ),
         array (
-          'key' => self::get_block_type_key($block_type, 'field_55c977e9637e2'),
+          'key' => 'field_55c977e9637e2',
           'label' => 'Background Size',
           'name' => 'background_size',
           'type' => 'select',
@@ -471,7 +498,7 @@ class Builder_Framework{
           'readonly' => 0,
         ),
         array (
-          'key' => self::get_block_type_key($block_type, 'field_55cac43d1df98'),
+          'key' => 'field_55cac43d1df98',
           'label' => 'Background Repeat',
           'name' => 'background_repeat',
           'type' => 'select',
@@ -500,7 +527,7 @@ class Builder_Framework{
           'readonly' => 0,
         ),
       ),
-      'Responsiveness' => array(
+      'Responsiveness & Sizing' => array(
         array (
           'key' => 'field_55e3aff57009e',
           'label' => 'Desktop Block Width',
@@ -611,9 +638,70 @@ class Builder_Framework{
           'disabled' => 0,
           'readonly' => 0,
         ),
+        array (
+          'key' => 'field_55fcc6b226255',
+          'label' => 'Vertical Sizing Mode',
+          'name' => 'size_mode_vertical',
+          'type' => 'select',
+          'instructions' => '',
+          'required' => 1,
+          'conditional_logic' => 0,
+          'wrapper' => array (
+            'width' => 25,
+            'class' => '',
+            'id' => '',
+          ),
+          'choices' => array (
+            'auto' => 'Auto',
+            'fixed' => 'Fixed',
+          ),
+          'default_value' => array (
+            'auto' => 'auto',
+          ),
+          'allow_null' => 0,
+          'multiple' => 0,
+          'ui' => 0,
+          'ajax' => 0,
+          'placeholder' => '',
+          'disabled' => 0,
+          'readonly' => 0,
+        ),
+        array (
+          'key' => 'field_55f4d1614cf47',
+          'label' => 'Vertical Size',
+          'name' => 'size_vertical',
+          'type' => 'select',
+          'instructions' => '',
+          'required' => 1,
+          'conditional_logic' => 0,
+          'wrapper' => array (
+            'width' => 25,
+            'class' => '',
+            'id' => '',
+          ),
+          'choices' => $this->vertical_sizes,
+          'default_value' => array (
+            'med' => 'med',
+          ),
+          'allow_null' => 0,
+          'multiple' => 0,
+          'ui' => 0,
+          'ajax' => 0,
+          'placeholder' => '',
+          'disabled' => 0,
+          'readonly' => 0,
+        ),
       )
     );
 
+    foreach($fields as $group => $blocks){
+      $new_blocks = array();
+      foreach($blocks as $b){
+        $b['key'] = preg_replace('/^field_/', 'field_' . $block_type, $b['key']);
+        $new_blocks[] = $b;
+      }
+      $fields[$group] = $new_blocks;
+    }
     return $fields;
   }
 }
