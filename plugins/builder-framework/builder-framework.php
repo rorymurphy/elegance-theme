@@ -71,6 +71,24 @@ class Builder_Framework{
       $css_class[] = 'eblock-theme-' . $theme;
     }
 
+    $widths = array(
+      intval(get_sub_field('width_desktop')),
+      get_sub_field('width_tablet'),
+      get_sub_field('width_mobile'),
+    );
+
+    for($i = 1; $i < sizeof($widths); $i++){
+      if( 'inherit' === $widths[$i] ){
+        $widths[$i] = $widths[ $i - 1 ];
+      }else{
+        $widths[$i] = intval( $widths[$i] );
+      }
+    }
+
+    $css_class[] = 'col-md-' . $widths[0];
+    $css_class[] = 'col-sm-' . $widths[1];
+    $css_class[] = 'col-xs-' . $widths[2];
+
     $size_mode = get_sub_field('size_mode_vertical');
     $size = get_sub_field('size_vertical');
 
