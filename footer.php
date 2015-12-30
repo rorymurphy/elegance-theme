@@ -1,4 +1,4 @@
-</div><!-- #container -->
+
 <footer>
     <div class="footer-inner">
         <?php

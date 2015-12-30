@@ -26,4 +26,3 @@
     </div><!-- /.container-fluid -->
   </nav>
 </section>
-<div class="container">

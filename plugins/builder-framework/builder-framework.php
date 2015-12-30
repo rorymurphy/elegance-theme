@@ -4,6 +4,7 @@ require_once 'template-page.php';
 require_once 'default-block-types/one-content.php';
 require_once 'default-block-types/two-content.php';
 require_once 'default-block-types/recent-posts.php';
+require_once 'default-block-types/carousel.php';
 
 class Builder_Framework{
   const BLOCK_TYPES_FILTER = 'elegance_block_types';
@@ -76,6 +77,9 @@ class Builder_Framework{
       get_sub_field('width_tablet'),
       get_sub_field('width_mobile'),
     );
+    if( -1 === $widths[0] ){
+      $widths[0] = 12;
+    }
 
     for($i = 1; $i < sizeof($widths); $i++){
       if( 'inherit' === $widths[$i] ){
@@ -85,9 +89,23 @@ class Builder_Framework{
       }
     }
 
-    $css_class[] = 'col-md-' . $widths[0];
-    $css_class[] = 'col-sm-' . $widths[1];
-    $css_class[] = 'col-xs-' . $widths[2];
+    if($widths[0] === 0){
+      $css_class[] = 'hidden-md';
+    }else{
+      $css_class[] = 'col-md-' . $widths[0];
+    }
+
+    if($widths[1] === 0){
+      $css_class[] = 'hidden-sm';
+    }else{
+      $css_class[] = 'col-sm-' . $widths[1];
+    }
+
+    if($widths[2] === 0){
+      $css_class[] = 'hidden-xs';
+    }else{
+      $css_class[] = 'col-xs-' . $widths[2];
+    }
 
     $size_mode = get_sub_field('size_mode_vertical');
     $size = get_sub_field('size_vertical');
@@ -99,6 +117,11 @@ class Builder_Framework{
   }
 
   function render_blocks(){
+    global $post;
+    $old_post = $post;
+    $post = $this->get_builder_object();
+
+    setup_postdata( $post );
     if(locate_template('blocks/block-display.php')){
       get_template_part('blocks/block-display');
     }else{
@@ -114,9 +137,17 @@ class Builder_Framework{
           endwhile;
       endif;
       print '</div>';
+
+      $post = $old_post;
     }
+
+    wp_reset_postdata();
   }
   function create_embedded_stylesheet(){
+    global $post;
+    $old_post = $post;
+    $post = $this->get_builder_object();
+    setup_postdata( $post );
 
     if( have_rows('block_wrapper') ):
         print '<style type="text/css">';
@@ -161,6 +192,8 @@ class Builder_Framework{
         print '</style>';
     endif;
 
+    wp_reset_postdata();
+    $post = $old_post;
   }
 
   function register_fields(){
@@ -291,7 +324,7 @@ class Builder_Framework{
   }
 
   function get_builder_object(){
-    $this->builder_obj = (null !== $this->builder_obj) ? $this->builder_obj : get_queried_object();
+    return ( null !== $this->builder_obj ) ? $this->builder_obj : get_queried_object();
   }
 
   static function get_block_type_key($block_type, $key){
@@ -351,27 +384,11 @@ class Builder_Framework{
           'disabled' => 0,
         ),
         array (
-          'key' => 'field_55e3dbb453b61',
-          'label' => '',
-          'name' => '',
-          'type' => 'message',
-          'instructions' => '',
-          'required' => 0,
-          'conditional_logic' => 0,
-          'wrapper' => array (
-            'width' => 50,
-            'class' => '',
-            'id' => '',
-          ),
-          'message' => 'Generally either a theme or background/text color are used',
-          'esc_html' => 0,
-        ),
-        array (
           'key' => 'field_55e3db6053b60',
           'label' => 'Text Color',
           'name' => 'text_color',
           'type' => 'color_picker',
-          'instructions' => '',
+          'instructions' => 'Generally either a theme or background/text color are used',
           'required' => 0,
           'conditional_logic' => 0,
           'wrapper' => array (
@@ -571,7 +588,9 @@ class Builder_Framework{
             9 => '3/4 width',
             10 => '5/6 width',
             11 => '11/12 width',
-            12 => 'Full Width',
+            12 => 'Full Container Width',
+            -1 => 'Full Screen Width',
+            0 => 'Hidden',
           ),
           'default_value' => 12,
           'allow_null' => 0,
@@ -609,6 +628,7 @@ class Builder_Framework{
             10 => '5/6 width',
             11 => '11/12 width',
             12 => 'Full Width',
+            0 => 'Hidden',
           ),
           'default_value' => 'inherit',
           'allow_null' => 0,
@@ -646,6 +666,7 @@ class Builder_Framework{
             10 => '5/6 width',
             11 => '11/12 width',
             12 => 'Full Width',
+            0 => 'Hidden',
           ),
           'default_value' => 'inherit',
           'allow_null' => 0,
@@ -728,9 +749,11 @@ global $__elegance_builder_framework;
 $__elegance_builder_framework = new Builder_Framework();
 
 function elegance_get_block_header(){
-  get_template_part('blocks/block-header');
+  $template_name = apply_filters('elegance_block_header_template', 'block-header');
+  get_template_part('blocks/' . $template_name);
 }
 
 function elegance_get_block_footer(){
-  get_template_part('blocks/block-footer');
+  $template_name = apply_filters('elegance_block_footer_template', 'block-footer');
+  get_template_part('blocks/' . $template_name);
 }
