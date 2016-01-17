@@ -6,6 +6,11 @@ load_plugin('navbar-walker');
 add_theme_support('custom-header');
 add_theme_support('custom-background');
 
+register_nav_menus(array(
+    'header-menu' => 'Header Menu',
+    'footer-menu' => 'Footer Menu'
+));
+
 add_action('wp_enqueue_scripts', function(){
 
   wp_register_script( 'bootstrap', get_template_directory_uri() . '/js/bootstrap.min.js', array('jquery'), sha1(filemtime(get_template_directory() . '/js/bootstrap.min.js')) );

@@ -82,7 +82,8 @@ class Builder_Framework{
     }
 
     for($i = 1; $i < sizeof($widths); $i++){
-      if( 'inherit' === $widths[$i] ){
+      //If the width specified is 'inherit' (-2)
+      if( -2 === $widths[$i] ){
         $widths[$i] = $widths[ $i - 1 ];
       }else{
         $widths[$i] = intval( $widths[$i] );
@@ -160,6 +161,16 @@ class Builder_Framework{
             if('' !== $text_color){
               printf('color: %1$s;', $text_color);
             }
+
+            $background_image = get_sub_field('background_image');
+            if(null !== $background_image && $background_image > 0){
+              $background_image = wp_get_attachment_image_src($background_image, 'full');
+              $background_image = $background_image[0];
+              // var_dump($background_image);
+              printf('background-image: url(%1$s);', $background_image);
+            }
+
+
 
             $background_color = get_sub_field('background_color');
             if('' !== $background_color){
@@ -615,7 +626,8 @@ class Builder_Framework{
             'id' => '',
           ),
           'choices' => array (
-            'inherit' => 'Same as Desktop',
+            -2 => 'Same as Desktop',
+            0 => 'Hidden',
             1 => '1/12 width',
             2 => '1/6 width',
             3 => '1/4 width',
@@ -628,9 +640,8 @@ class Builder_Framework{
             10 => '5/6 width',
             11 => '11/12 width',
             12 => 'Full Width',
-            0 => 'Hidden',
           ),
-          'default_value' => 'inherit',
+          'default_value' => -2,
           'allow_null' => 0,
           'multiple' => 0,
           'ui' => 0,
@@ -653,7 +664,7 @@ class Builder_Framework{
             'id' => '',
           ),
           'choices' => array (
-            'inherit' => 'Same as Tablet',
+            -2 => 'Same as Tablet',
             1 => '1/12 width',
             2 => '1/6 width',
             3 => '1/4 width',
@@ -668,7 +679,7 @@ class Builder_Framework{
             12 => 'Full Width',
             0 => 'Hidden',
           ),
-          'default_value' => 'inherit',
+          'default_value' => -2,
           'allow_null' => 0,
           'multiple' => 0,
           'ui' => 0,

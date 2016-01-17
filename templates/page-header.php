@@ -10,7 +10,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#"><img src="<?php print get_header_image(); ?>" alt="<?php print get_bloginfo('name'); ?>"/></a>
+        <a class="navbar-brand" href="<?php print get_home_url(); ?>"><img src="<?php print get_header_image(); ?>" alt="<?php print get_bloginfo('name'); ?>"/></a>
       </div>
 
       <?php
