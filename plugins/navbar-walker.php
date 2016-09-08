@@ -12,7 +12,7 @@ class NavbarWalker extends Walker_Nav_Menu {
 	 * @param string $output Passed by reference. Used to append additional content.
 	 * @param int $depth Depth of page. Used for padding.
 	 */
-	function start_lvl(&$output, $depth) {
+	function start_lvl(&$output, $depth = 0, $args = array()) {
             $indent = str_repeat("\t", $depth);
             switch($this->_style){
                 case 'dropdown':
@@ -25,9 +25,9 @@ class NavbarWalker extends Walker_Nav_Menu {
                     $output .= "\n$indent<ul class=\"nav nav-pills nav-stacked\">\n";
                     break;
             }
-            
+
 	}
-        
+
 
 	/**
 	 * @see Walker::end_lvl()
@@ -36,7 +36,7 @@ class NavbarWalker extends Walker_Nav_Menu {
 	 * @param string $output Passed by reference. Used to append additional content.
 	 * @param int $depth Depth of page. Used for padding.
 	 */
-	function end_lvl(&$output, $depth) {
+	function end_lvl(&$output, $depth = 0, $args = array()) {
 		$indent = str_repeat("\t", $depth);
 		$output .= "$indent</ul>\n";
 	}
@@ -51,7 +51,7 @@ class NavbarWalker extends Walker_Nav_Menu {
 	 * @param int $current_page Menu item ID.
 	 * @param object $args
 	 */
-	function start_el(&$output, $item, $depth, $args) {
+	function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
 		global $wp_query;
 		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
 
@@ -82,7 +82,7 @@ class NavbarWalker extends Walker_Nav_Menu {
                 }else{
                     $attributes .= ! empty( $item->url )        ? ' href="'   . esc_attr( $item->url        ) .'"' : '';
                 }
-                
+
 		$item_output = $args->before;
 		$item_output .= '<a'. $attributes .'>';
 		$item_output .= $args->link_before . apply_filters( 'the_title', $item->title, $item->ID ) . $args->link_after;
@@ -103,7 +103,7 @@ class NavbarWalker extends Walker_Nav_Menu {
 	 * @param object $item Page data object. Not used.
 	 * @param int $depth Depth of page. Not Used.
 	 */
-	function end_el(&$output, $item, $depth) {
+	function end_el(&$output, $item, $depth = 0, $args = array()) {
 		$output .= "</li>\n";
 	}
 
