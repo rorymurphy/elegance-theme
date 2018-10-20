@@ -12,7 +12,7 @@ class NavbarWalker extends Walker_Nav_Menu {
 	 * @param string $output Passed by reference. Used to append additional content.
 	 * @param int $depth Depth of page. Used for padding.
 	 */
-	function start_lvl(&$output, $depth) {
+	function start_lvl( &$output, $depth = 0, $args = array() ) {
             $indent = str_repeat("\t", $depth);
             switch($this->_style){
                 case 'dropdown':
@@ -36,7 +36,7 @@ class NavbarWalker extends Walker_Nav_Menu {
 	 * @param string $output Passed by reference. Used to append additional content.
 	 * @param int $depth Depth of page. Used for padding.
 	 */
-	function end_lvl(&$output, $depth) {
+	function end_lvl( &$output, $depth = 0, $args = array() ) {
 		$indent = str_repeat("\t", $depth);
 		$output .= "$indent</ul>\n";
 	}
@@ -51,7 +51,7 @@ class NavbarWalker extends Walker_Nav_Menu {
 	 * @param int $current_page Menu item ID.
 	 * @param object $args
 	 */
-	function start_el(&$output, $item, $depth, $args) {
+	function start_el( &$output, $item, $depth = 0, $args = array(), $current_object_id = 0 ) {
 		global $wp_query;
 		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
 
@@ -103,15 +103,15 @@ class NavbarWalker extends Walker_Nav_Menu {
 	 * @param object $item Page data object. Not used.
 	 * @param int $depth Depth of page. Not Used.
 	 */
-	function end_el(&$output, $item, $depth) {
+	function end_el( &$output, $object, $depth = 0, $args = array() ) {
 		$output .= "</li>\n";
 	}
 
-        function display_element ($element, &$children_elements, $max_depth, $depth = 0, $args, &$output)
-        {
-            // check, whether there are children for the given ID and append it to the element with a (new) ID
-            $args[0]->hasChildren = isset($children_elements[$element->ID]) && !empty($children_elements[$element->ID]);
+	function display_element ($element, &$children_elements, $max_depth, $depth = 0, $args, &$output)
+	{
+		// check, whether there are children for the given ID and append it to the element with a (new) ID
+		$args[0]->hasChildren = isset($children_elements[$element->ID]) && !empty($children_elements[$element->ID]);
 
-            return parent::display_element($element, $children_elements, $max_depth, $depth, $args, $output);
-        }
+		return parent::display_element($element, $children_elements, $max_depth, $depth, $args, $output);
+	}
 }

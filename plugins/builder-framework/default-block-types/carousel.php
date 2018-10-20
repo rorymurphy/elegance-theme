@@ -1,4 +1,4 @@
-  <?php
+<?php
 
 class Carousel_Block {
   const BLOCK_TYPE = 'carousel';
