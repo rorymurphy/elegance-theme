@@ -8,7 +8,7 @@ var gulp            = require('gulp'),
     uglify          = require('gulp-uglify');
 
 var gulpBase        = './',
-    lessSource      = '/less/theme.less',
+    lessSource      = './less/theme.less',
     cssDir          = './css/'
     cssFile         = 'theme.css',
     watchLessFiles  = '/**/*.less';
@@ -23,12 +23,6 @@ gulp.task( 'less', function(){
              .pipe( concat( cssFile ))
              .pipe( gulp.dest(cssDir) );
 
-});
-
-gulp.task( 'less-sliding-puzzle', function(){
-  return gulp.src( './plugins/block-sliding-puzzle/sliding-puzzle.less' )
-             .pipe( less() )
-             .pipe( gulp.dest('/plugins/block-sliding-puzzle/') );
 });
 
 gulp.task( 'default', function(cb){
