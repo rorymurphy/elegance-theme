@@ -3,6 +3,7 @@
 require_once 'template-page.php';
 require_once 'default-block-types/one-content.php';
 require_once 'default-block-types/two-content.php';
+require_once 'default-block-types/three-content.php';
 require_once 'default-block-types/recent-posts.php';
 require_once 'default-block-types/carousel.php';
 
@@ -12,11 +13,13 @@ class Builder_Framework{
   const BLOCK_VERTICAL_SIZES = 'elegance_block_vertical_sizes';
   const THEME_TYPE_FILTER = 'elegance_block_themes';
   const BUILDER_POST_TYPES_FILTER = 'elegance_builder_post_types';
+  const BUILDER_PAGE_TEMPLATES_FILTER = 'elegance_builder_page_templates';
   const TEMPLATE_PAGE_POST_TYPE = 'template_page';
   const BUILDER_BLOCK_RENDER_ACTION = 'elegance_block_render_%1$s';
 
   var $block_types;
   var $post_types;
+  var $page_templates;
   var $block_iter;
   var $builder_obj;
   var $themes;
@@ -43,6 +46,10 @@ class Builder_Framework{
       self::TEMPLATE_PAGE_POST_TYPE
     );
     $this->post_types = apply_filters(self::BUILDER_POST_TYPES_FILTER, $this->post_types);
+
+    $this->page_templates = array('builder-page.php');
+    $this->page_templates = apply_filters(self::BUILDER_PAGE_TEMPLATES_FILTER, $this->page_templates);
+
     $this->themes = array(
       'default' => 'Default'
     );
@@ -83,7 +90,7 @@ class Builder_Framework{
 
     for($i = 1; $i < sizeof($widths); $i++){
       //If the width specified is 'inherit' (-2)
-      if( -2 === $widths[$i] ){
+      if( -2 === intval($widths[$i]) ){
         $widths[$i] = $widths[ $i - 1 ];
       }else{
         $widths[$i] = intval( $widths[$i] );
@@ -111,7 +118,16 @@ class Builder_Framework{
     $size_mode = get_sub_field('size_mode_vertical');
     $size = get_sub_field('size_vertical');
 
-    $css_class[] = sprintf('size-vert-%1$s-%2$s', $size_mode, $size);
+    if('fixed' === $size_mode){
+      $css_class[] = sprintf('size-vert-%1$s-%2$s', $size_mode, $size);
+    }else{
+      $css_class[] = sprintf('size-vert-%1$s', $size_mode);      
+    }
+
+    if('auto' !== $size_mode){
+      $vertical_position = get_sub_field('position_vertical');
+      $css_class[] = sprintf('pos-vert-%1$s', $vertical_position);
+    }
 
     $classes = array_merge($classes, $css_class);
     return $classes;
@@ -162,21 +178,16 @@ class Builder_Framework{
               printf('color: %1$s;', $text_color);
             }
 
-            $background_image = get_sub_field('background_image');
-            if(null !== $background_image && $background_image > 0){
-              $background_image = wp_get_attachment_image_src($background_image, 'full');
-              $background_image = $background_image[0];
-              // var_dump($background_image);
-              printf('background-image: url(%1$s);', $background_image);
+            $background_image_id = get_sub_field('background_image');
+            if(null !== $background_image_id && $background_image_id > 0){
+              $background_image = wp_get_attachment_image_src($background_image_id, 'full');
+              printf('background-image: url(%1$s);', $background_image[0]);
             }
-
-
 
             $background_color = get_sub_field('background_color');
             if('' !== $background_color){
               printf('background-color: %1$s;', $background_color);
             }
-            $background_image = get_sub_field('background_image');
 
             $background_position = get_sub_field('background_position');
             if('' !== $background_position){
@@ -197,7 +208,16 @@ class Builder_Framework{
             if('' !== $background_repeat){
               printf('background-repeat: %1$s;', $background_repeat);
             }
+
+            if(null !== $background_image && is_array($background_image) && $background_image[1] > 0){
+              $vertical_mode = get_sub_field('size_mode_vertical');
+              if('background' === $vertical_mode){
+                $aspect = $background_image[2] / $background_image[1] * 100;
+                printf('padding-top: %1$s%%', $aspect);
+              }
+            }
             print '}';
+
             $this->block_iter++;
         endwhile;
         print '</style>';
@@ -209,20 +229,21 @@ class Builder_Framework{
 
   function register_fields(){
     if( function_exists('acf_add_local_field_group') ):
-      $locations = array (
-        array (
+      $locations = array();
+      foreach($this->page_templates as $template){
+        $locations[] = array (
           array (
             'param' => 'page_template',
             'operator' => '==',
-            'value' => 'builder-page.php',
+            'value' => $template,
           ),
           array (
             'param' => 'post_type',
             'operator' => '==',
             'value' => 'page',
           ),
-        ),
-      );
+        );
+      }
 
       foreach ($this->post_types as $ptype) {
         $locations[] = array (
@@ -702,12 +723,53 @@ class Builder_Framework{
             'id' => '',
           ),
           'choices' => array (
-            'auto' => 'Auto',
+            'auto' => 'Auto (Content)',
+            'background' => 'Auto (Background)',
             'fixed' => 'Fixed',
           ),
-          'default_value' => array (
-            'auto' => 'auto',
+          'default_value' => 'auto',
+          'allow_null' => 0,
+          'multiple' => 0,
+          'ui' => 0,
+          'ajax' => 0,
+          'placeholder' => '',
+          'disabled' => 0,
+          'readonly' => 0,
+        ),
+        array (
+          'key' => 'field_55ccdc3b696c3',
+          'label' => 'Vertical Position',
+          'name' => 'position_vertical',
+          'type' => 'select',
+          'instructions' => '',
+          'required' => 0,
+          'conditional_logic' => array (
+            array (
+              array (
+                'field' => 'field_55fcc6b226255',
+                'operator' => '==',
+                'value' => 'background',
+              ),
+            ),
+            array (
+              array (
+                'field' => 'field_55fcc6b226255',
+                'operator' => '==',
+                'value' => 'fixed',
+              ),
+            ),
           ),
+          'wrapper' => array (
+            'width' => '25',
+            'class' => '',
+            'id' => '',
+          ),
+          'choices' => array (
+            'top' => 'Top',
+            'middle' => 'Middle',
+            'bottom' => 'Bottom',
+          ),
+          'default_value' => 'middle',
           'allow_null' => 0,
           'multiple' => 0,
           'ui' => 0,
@@ -730,9 +792,7 @@ class Builder_Framework{
             'id' => '',
           ),
           'choices' => $this->vertical_sizes,
-          'default_value' => array (
-            'med' => 'med',
-          ),
+          'default_value' => 'med',
           'allow_null' => 0,
           'multiple' => 0,
           'ui' => 0,
@@ -747,13 +807,31 @@ class Builder_Framework{
     foreach($fields as $group => $blocks){
       $new_blocks = array();
       foreach($blocks as $b){
-        $b['key'] = preg_replace('/^field_/', 'field_' . $block_type, $b['key']);
+        $b['key'] = preg_replace('/^field_/', 'field_' . $block_type . '_', $b['key']);
+
+        if(is_array($b['conditional_logic'])){
+          $b['conditional_logic'] = fix_conditionals($block_type, $b['conditional_logic']);
+        }
         $new_blocks[] = $b;
       }
       $fields[$group] = $new_blocks;
     }
     return $fields;
   }
+}
+
+function fix_conditionals($block_type, $conditional){
+  if(!is_associative($conditional)){
+    $conditional = array_map(function($cond) use ($block_type){ return fix_conditionals($block_type, $cond);}, $conditional);
+  }else{
+    $conditional['field'] = preg_replace('/^field_/', 'field_' . $block_type . '_', $conditional['field']);
+  }
+  return $conditional;
+}
+function is_associative($a) {
+	foreach(array_keys($a) as $key)
+		if (!is_int($key)) return TRUE;
+	return FALSE;
 }
 
 global $__elegance_builder_framework;

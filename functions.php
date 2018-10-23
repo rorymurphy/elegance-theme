@@ -2,15 +2,44 @@
 require_once 'plugins/plugin-loader.php';
 load_plugin('builder-framework');
 load_plugin('navbar-walker');
+load_plugin('bootstrap-search-widget');
 
-add_theme_support('custom-header');
+add_theme_support('post-thumbnails');
 add_theme_support('custom-background');
+add_theme_support('custom-header');
+add_theme_support('menus');
 
 register_nav_menus(array(
     'header-menu' => 'Header Menu',
     'footer-menu' => 'Footer Menu'
 ));
 
+add_action( 'widgets_init', function(){
+    register_sidebar(array(
+        'name'          => "Blog Page Right",
+        'id'            => 'blog-rail',
+        'description'   => '',
+        'class'         => '',
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</div>',
+        'before_title'  => '<h2 class="widgettitle">',
+        'after_title'   => '</h2>'
+    ));
+    
+    register_sidebar(array(
+        'name'          => "Footer",
+        'id'            => 'footer',
+        'description'   => '',
+        'class'         => '',
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</div>',
+        'before_title'  => '<h2 class="widgettitle">',
+        'after_title'   => '</h2>'
+    ));
+} );
+
+
+acf_form_head();
 add_action('wp_enqueue_scripts', function(){
 
   wp_register_script( 'bootstrap', get_template_directory_uri() . '/js/bootstrap.min.js', array('jquery'), sha1(filemtime(get_template_directory() . '/js/bootstrap.min.js')) );
@@ -19,6 +48,11 @@ add_action('wp_enqueue_scripts', function(){
   }
   wp_enqueue_style('theme');
 });
+
+
+
+
+
 function get_background_image_size($size){
     global $wpdb;
     $bkgd = get_background_image();

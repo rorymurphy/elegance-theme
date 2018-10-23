@@ -1,0 +1,18 @@
+.navbar{
+    > .navbar-inner{
+        display: flex;
+        width: 100%;
+        @include make-container-max-widths();
+        padding-right: ($grid-gutter-width / 2);
+        padding-left: ($grid-gutter-width / 2);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    &.expand-lg{
+        > .navbar-inner{
+            flex-flow: row nowrap;
+            justify-content: flex-start;
+        }       
+    }
+}

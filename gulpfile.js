@@ -1,31 +1,20 @@
 "use strict";
 
 var gulp            = require('gulp'),
-    less            = require('gulp-less'),
-    watch           = require('gulp-watch'),
-    concat          = require('gulp-concat'),
-    minifyCss       = require('gulp-minify-css'),
-    uglify          = require('gulp-uglify');
+    sass            = require('gulp-sass');
 
 var gulpBase        = './',
-    lessSource      = './less/theme.less',
-    cssDir          = './css/'
+    sassSource      = './scss/theme.scss',
+    cssDir          = './css/',
     cssFile         = 'theme.css',
-    watchLessFiles  = '/**/*.less';
+    watchLessFiles  = '/**/*.scss';
 
-gulp.task( 'less', function(){
-  return gulp.src( lessSource )
-             .pipe( less() )
-             .on( 'error', function( err ){
-               console.log( err );
-               this.emit( 'end' );
-             })
-             .pipe( concat( cssFile ))
-             .pipe( gulp.dest(cssDir) );
-
-});
-
-gulp.task( 'default', function(cb){
-  gulp.watch( watchLessFiles, ['less', 'less-sliding-puzzle']);
-  runSequence([ 'less', 'less-sliding-puzzle' ]);
+var sass = require('gulp-sass');
+ 
+sass.compiler = require('node-sass');
+ 
+gulp.task('sass', function () {
+  return gulp.src(sassSource)
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest(cssDir));
 });

@@ -1,0 +1,30 @@
+.eblock.size-vert-background, .eblock.size-vert-fixed {
+    &.pos-vert-top{
+        position:relative;
+        > .eblock-inner{
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+    }
+
+    &.pos-vert-bottom{
+        position:relative;
+        > .eblock-inner{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    }
+
+    &.pos-vert-middle{
+        position: relative;
+        > .eblock-inner{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+}

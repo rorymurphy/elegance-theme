@@ -58,9 +58,11 @@ class NavbarWalker extends Walker_Nav_Menu {
 		$class_names = $value = '';
 
 		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
-                if($args->hasChildren && $this->_style === 'dropdown'){
-                    $classes[] = 'dropdown';
-                }
+		$classes[] = 'nav-item';
+
+		if($args->hasChildren && $this->_style === 'dropdown'){
+			$classes[] = 'dropdown';
+		}
 		$classes[] = 'menu-item-' . $item->ID;
 
                 $classes = apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args );
@@ -78,10 +80,10 @@ class NavbarWalker extends Walker_Nav_Menu {
 		$attributes .= ! empty( $item->target )     ? ' target="' . esc_attr( $item->target     ) .'"' : '';
 		$attributes .= ! empty( $item->xfn )        ? ' rel="'    . esc_attr( $item->xfn        ) .'"' : '';
 		if($args->hasChildren && $this->_style === 'dropdown'){
-                    $attributes .= ' href="#" class="dropdown-toggle" data-toggle="dropdown"';
-                }else{
-                    $attributes .= ! empty( $item->url )        ? ' href="'   . esc_attr( $item->url        ) .'"' : '';
-                }
+			$attributes .= ' href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown"';
+		}else{
+			$attributes .= ! empty( $item->url ) ? ' class="nav-link" href="'   . esc_attr( $item->url        ) .'"' : '';
+		}
                 
 		$item_output = $args->before;
 		$item_output .= '<a'. $attributes .'>';

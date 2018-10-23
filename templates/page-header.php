@@ -1,28 +1,31 @@
 <div class="background"></div>
 <section class="header">
-  <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container-fluid">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-nav" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="<?php print get_home_url(); ?>"><img src="<?php print get_header_image(); ?>" alt="<?php print get_bloginfo('name'); ?>"/></a>
-      </div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="navbar-inner">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-      <?php
+      <?php 
+        printf('<a class="navbar-brand" href="%1$s">', get_home_url());
+        $header_image = get_header_image();
+        if($header_image){
+          printf('<img src="%1$s" alt="%2$s"/>', $header_image, get_bloginfo('name'));
+        }else{
+          print(get_bloginfo('name'));
+        }
+        print('</a>');
+
         wp_nav_menu(array(
             'theme_location'  => 'header-menu',
             'container_class' => 'navbar-collapse collapse',
             'container_id' => 'header-nav',
-            'menu_class' => 'nav navbar-nav',
+            'menu_class' => 'navbar-nav mr-auto',
             'fallback_cb' => null,
             'walker' => new NavbarWalker
         ));
       ?>
-    </div><!-- /.container-fluid -->
+    </div>
+
   </nav>
 </section>

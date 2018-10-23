@@ -1,0 +1,62 @@
+@import "variables";
+@import "bootstrap/bootstrap";
+@import "bootstrap_overrides";
+@import "wordpress";
+
+.post-single{
+    .post-meta{
+        font-style: italic;
+        font-size: 0.8em;
+        padding: 5px 0 5px 5px;
+        border-bottom: solid 3px theme-color("primary");
+        margin-bottom: 20px;
+    }
+    
+    .post-thumbnail > img {
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+.post-loop{
+    .post-meta{
+        font-style: italic;
+        font-size: 0.8em;
+    }
+    .post-thumbnail
+    {
+        position: relative;
+        height: 100%;
+        > img {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            max-width: 100%;
+            width: auto;
+            height: auto;
+        }
+    }  
+}
+
+
+.widget.widget_search{
+    input[type="submit"]{
+        @extend .btn;
+        @extend .btn-primary;
+    }
+}
+
+.widget{
+    padding: 10px 0 10px 0;
+
+    margin-bottom: 10px;
+
+    ul {
+        list-style: none;
+        padding-left: 0;
+        li:before {
+            content: '\002D';
+            margin: 0 1em;
+        }
+    }
+}
