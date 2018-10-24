@@ -50,7 +50,8 @@ add_action('wp_enqueue_scripts', function(){
 });
 
 
-
+add_image_size('small-square', 480, 480, true);
+add_image_size('small-4-3', 480, 360, true);
 
 
 function get_background_image_size($size){

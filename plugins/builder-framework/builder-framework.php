@@ -6,6 +6,7 @@ require_once 'default-block-types/two-content.php';
 require_once 'default-block-types/three-content.php';
 require_once 'default-block-types/recent-posts.php';
 require_once 'default-block-types/carousel.php';
+require_once 'default-block-types/card-set.php';
 
 class Builder_Framework{
   const BLOCK_TYPES_FILTER = 'elegance_block_types';

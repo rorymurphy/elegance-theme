@@ -44,13 +44,13 @@ $classes[] = 'col-sm-' . $widths[1];
 $classes[] = 'col-xs-' . $widths[2];
 
 if($positions[0] !== null && $positions[0] !== 0){
-  $classes[] = ' col-md-offset-' . $positions[0];
+  $classes[] = 'offset-md-' . $positions[0];
 }
 if($positions[0] !== null && $positions[1] !== 0){
-  $classes[] = ' col-sm-offset-' . $positions[1];
+  $classes[] = 'offset-sm-' . $positions[1];
 }
 if($positions[0] !== null && $positions[2] !== 0){
-  $classes[] = ' col-xs-offset-' . $positions[2];
+  $classes[] = 'offset-xs-' . $positions[2];
 }
 
 printf('<div class="row"><div class="%1$s">%2$s</div></div>', implode(' ', $classes), $content);

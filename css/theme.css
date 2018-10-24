@@ -6412,7 +6412,26 @@ a.text-dark:hover, a.text-dark:focus {
   .eblock.size-vert-background.pos-vert-middle > .eblock-inner, .eblock.size-vert-fixed.pos-vert-middle > .eblock-inner {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%); }
+    transform: translateY(-50%);
+    left: 0;
+    right: 0; }
+
+.container-fluid > .row > .eblock > .eblock-inner > .row {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto; }
+  @media (min-width: 576px) {
+    .container-fluid > .row > .eblock > .eblock-inner > .row {
+      max-width: 540px; } }
+  @media (min-width: 768px) {
+    .container-fluid > .row > .eblock > .eblock-inner > .row {
+      max-width: 720px; } }
+  @media (min-width: 992px) {
+    .container-fluid > .row > .eblock > .eblock-inner > .row {
+      max-width: 960px; } }
+  @media (min-width: 1200px) {
+    .container-fluid > .row > .eblock > .eblock-inner > .row {
+      max-width: 1140px; } }
 
 .post-single .post-meta {
   font-style: italic;
@@ -6437,6 +6456,8 @@ a.text-dark:hover, a.text-dark:focus {
     top: 50%;
     transform: translateY(-50%);
     max-width: 100%;
+    left: 0;
+    right: 0;
     width: auto;
     height: auto; }
 

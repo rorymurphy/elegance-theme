@@ -21,14 +21,14 @@ for($i = 1; $i < sizeof($layouts); $i++){
 }
 
 $classes_left = array();
-$classes_left[] = 'col-md-' . $widths[0][0];
-$classes_left[] = 'col-sm-' . $widths[1][0];
-$classes_left[] = 'col-xs-' . $widths[2][0];
+$classes_left[] = 'col-md-' . $layouts[0][0];
+$classes_left[] = 'col-sm-' . $layouts[1][0];
+$classes_left[] = 'col-xs-' . $layouts[2][0];
 
 $classes_right = array();
-$classes_right[] = 'col-md-' . $widths[0][1];
-$classes_right[] = 'col-sm-' . $widths[1][1];
-$classes_right[] = 'col-xs-' . $widths[2][1];
+$classes_right[] = 'col-md-' . $layouts[0][1];
+$classes_right[] = 'col-sm-' . $layouts[1][1];
+$classes_right[] = 'col-xs-' . $layouts[2][1];
 
 printf('<div class="row"><div class="%1$s">%2$s</div><div class="%3$s">%4$s</div></div>', implode(' ', $classes_left), $content1, implode(' ', $classes_right), $content2);
 
